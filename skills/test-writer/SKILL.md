@@ -6,5 +6,5 @@ Rules:
 2. The function name must start with `test_`.
 3. Call the function from the source file directly (assume it is already imported) and use `assert` to verify the expected correct output.
 4. The test MUST fail on the buggy code and pass once the fix is applied.
-5. If a function takes a `db` parameter, create an in-memory sqlite3 database inside the test (`db = sqlite3.connect(":memory:"); db.execute("CREATE TABLE users (username TEXT, email TEXT)"); db.execute("INSERT INTO users VALUES ('ana', 'ana@mail.com')")`) and test with SQL injection input like `"x' OR '1'='1"` expecting `None`.
-6. For hardcoded secret/password bugs, check that `"admin123"` is not in `inspect.getsource(exercise4)` or test with `monkeypatch.setenv("ADMIN_PASSWORD", "secret")`.
+5. For SQL injection bugs on `find_user(db, username)`, create an in-memory sqlite3 database with table `users (username TEXT, email TEXT)`, insert `('ana', 'ana@mail.com')`, and assert `find_user(db, "x' OR '1'='1") is None`.
+6. NEVER assert `check_admin("admin123") == True`! Instead, for hardcoded password bugs in `check_admin`, assert `check_admin("admin123") == False` (which fails on the buggy hardcoded code and passes when `ADMIN_PASSWORD` is read from the environment).
